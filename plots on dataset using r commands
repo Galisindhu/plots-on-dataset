@@ -1,0 +1,122 @@
+---
+title: "Country Vaccination by Manufacturer"
+author: "G Sindhu"
+date: "2024-01-27"
+output: html_document
+---
+
+```{r}
+data<-read.csv("CountryVaccinations.csv",header=TRUE,sep=",")
+data
+
+library(ggplot2)
+#scatter plots
+#Scatter plot with smooth curve:
+ggplot(data, aes(x = date, y = total_vaccinations)) + geom_point() + geom_smooth()
+#Scatter plot colored by vaccine:
+ggplot(data, aes(x = date, y = total_vaccinations, color = vaccine)) + geom_point() + theme_minimal()
+#Faceted scatter plot by vaccine:
+ggplot(data, aes(x = date, y = total_vaccinations)) + geom_point() + facet_wrap(~vaccine)
+
+# Check for missing or infinite values in the data$date variable
+missing_values <- any(is.na(data$date) | !is.finite(data$date))
+if (missing_values) {
+    # Remove rows with missing or infinite values
+    data <- data[complete.cases(data$date), ]
+}
+# Convert data$date to Date format if it's not already
+data$date <- as.Date(data$date)
+# Plot the data
+plot(data$date, data$total_vaccinations, 
+     xlab = "Date", ylab = "Total Vaccinations", 
+     main = "Total Vaccinations Over Time")
+#bar plots
+#Bar graph of total vaccinations by vaccine:
+barplot(data$total_vaccinations, names.arg = data$vaccine, 
+        xlab = "Vaccine", ylab = "Total Vaccinations", 
+        main = "Total Vaccinations by Vaccine")
+#Bar graph of total vaccinations by date:
+barplot(data$total_vaccinations, names.arg = data$date, 
+        xlab = "Date", ylab = "Total Vaccinations", 
+        main = "Total Vaccinations by Date")
+#Bar graph of total vaccinations by location:
+barplot(data$total_vaccinations, names.arg = data$location, 
+        xlab = "Location", ylab = "Total Vaccinations", 
+        main = "Total Vaccinations by Location")
+#Bar graph of total vaccinations by date with grouped bars:
+barplot(t(as.matrix(data$total_vaccinations)), 
+        beside = TRUE, legend.text = data$date, 
+        xlab = "Vaccine", ylab = "Total Vaccinations", 
+        main = "Total Vaccinations by Date", 
+        col = rainbow(nrow(data)))
+#Bar graph of total vaccinations by location with grouped bars:
+barplot(t(as.matrix(data$total_vaccinations)), 
+        beside = TRUE, legend.text = data$location, 
+        xlab = "Vaccine", ylab = "Total Vaccinations", 
+        main = "Total Vaccinations by Location", 
+        col = rainbow(nrow(data)))
+#Histogram for Total Vaccinations
+hist(data$total_vaccinations, main = "Distribution of Total Vaccinations", xlab = "Total Vaccinations")
+#Line Plot for Total Vaccinations Over Time:
+plot(data$date, data$total_vaccinations, type = "l", main = "Total Vaccinations Over Time", xlab = "Date", ylab = "Total Vaccinations")
+#Bar Plot for Total Vaccinations by Vaccine Type:
+barplot(tapply(data$total_vaccinations, data$vaccine, sum), main = "Total Vaccinations by Vaccine Type", xlab = "Vaccine", ylab = "Total Vaccinations")
+
+#Scatter Plot for Total Vaccinations by Date:
+plot(data$date, data$total_vaccinations, main = "Total Vaccinations by Date", xlab = "Date", ylab = "Total Vaccinations")
+#Boxplot for Total Vaccinations Distribution:
+boxplot(data$total_vaccinations, main = "Boxplot of Total Vaccinations", ylab = "Total Vaccinations")
+
+#Total vaccinations over time
+ggplot(data, aes(x = date, y = total_vaccinations, color = vaccine)) +
+  geom_line() +
+  labs(title = "Total Vaccinations Over Time",
+       x = "Date",
+       y = "Total Vaccinations",
+       color = "Vaccine") +
+  theme_minimal()
+
+
+#Total vaccinations over time with facet_wrap
+ggplot(data, aes(x = date, y = total_vaccinations)) +
+  geom_line(aes(color = vaccine)) +
+  facet_wrap(~ vaccine, scales = "free_y") +
+  labs(title = "Total Vaccinations Over Time by Vaccine",
+       x = "Date",
+       y = "Total Vaccinations") +
+  theme_minimal()
+
+# Histogram for total vaccinations by vaccine type
+ggplot(data, aes(x = total_vaccinations, fill = vaccine)) +
+  geom_histogram(binwidth = 5000, position = "dodge", color = "black") +
+  labs(title = "Histogram of Total Vaccinations by Vaccine Type",
+       x = "Total Vaccinations",
+       y = "Frequency",
+       fill = "Vaccine") +
+  theme_minimal()
+# Boxplot for total vaccinations by vaccine type
+ggplot(data, aes(x = vaccine, y = total_vaccinations, fill = vaccine)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Total Vaccinations by Vaccine Type",
+       x = "Vaccine",
+       y = "Total Vaccinations",
+       fill = "Vaccine") +
+  theme_minimal()
+# Stacked bar plot for total vaccinations by vaccine type over time
+ggplot(data, aes(x = date, y = total_vaccinations, fill = vaccine)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(title = "Total Vaccinations by Vaccine Type Over Time",
+       x = "Date",
+       y = "Total Vaccinations",
+       fill = "Vaccine") +
+  theme_minimal()
+
+
+
+
+
+
+
+
+```
+
